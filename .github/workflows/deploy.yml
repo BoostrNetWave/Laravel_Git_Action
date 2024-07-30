@@ -48,6 +48,11 @@ jobs:
             sudo apt install postgresql-16 -y
 
             # Setup PostgreSQL
+            # sudo -i -u postgres psql -c "CREATE USER your_username WITH PASSWORD 'your_password';"
+            # sudo -i -u postgres psql -c "ALTER USER your_username WITH SUPERUSER;"
+            # sudo -i -u postgres psql -c "CREATE DATABASE your_database_name;"
+            # sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE your_database_name TO your_username;"
+
             sudo -i -u postgres psql -c "CREATE USER betnwin_user WITH PASSWORD 'sivA898S';"
             sudo -i -u postgres psql -c "ALTER USER betnwin_user WITH SUPERUSER;"
             sudo -i -u postgres psql -c "CREATE DATABASE betnwin_db;"
@@ -66,30 +71,32 @@ jobs:
             # Install Nginx
             sudo apt install nginx -y
 
-            # Configure Nginx
-            sudo bash -c 'cat > /etc/nginx/sites-available/betnwin_pro <<EOL
-            server {
-                listen 80;
-                server_name 170.64.131.176;
+            # Create Nginx configuration file
+            echo 'server {
+              listen 80;
+              server_name 170.64.131.176;
 
-                root /var/www/betnwin_pro/public;
-                index index.php index.html index.htm;
+              root /var/www/betnwin_pro/public;
+              index index.php index.html index.htm;
 
-                location / {
-                    try_files \$uri \$uri/ /index.php?\$query_string;
-                }
+              location / {
+                  try_files $uri $uri/ /index.php?$query_string;
+              }
 
-                location ~ \.php$ {
-                    include snippets/fastcgi-php.conf;
-                    fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-                }
+              location ~ \.php$ {
+                  include snippets/fastcgi-php.conf;
+                  fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+              }
 
-                location ~ /\.ht {
-                    deny all;
-                }
-            }
-            EOL'
+              location ~ /\.ht {
+                  deny all;
+              }
+            }' | sudo tee /etc/nginx/sites-available/betnwin_pro > /dev/null
+
+            # Enable the Nginx site configuration
             sudo ln -s /etc/nginx/sites-available/betnwin_pro /etc/nginx/sites-enabled/
+
+            # Test and restart Nginx
             sudo nginx -t
             sudo systemctl restart nginx
 
