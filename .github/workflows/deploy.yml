@@ -59,10 +59,15 @@ jobs:
             sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE betnwin_db TO betnwin_user;"
 
             # Install Laravel 11
-            sudo mkdir -p /var/www/betnwin_pro
-            sudo chown -R $USER:$USER /var/www/betnwin_pro
-            cd /var/www/betnwin_pro
+            cd /var/www/
             composer create-project --prefer-dist laravel/laravel betnwin_pro "11.*"
+            sudo chown -R $USER:$USER /var/www/betnwin_pro
+
+            # Install Laravel 11
+            # sudo mkdir -p /var/www/betnwin_pro
+            # sudo chown -R $USER:$USER /var/www/betnwin_pro
+            # cd /var/www/betnwin_pro
+            # composer create-project --prefer-dist laravel/laravel betnwin_pro "11.*"
 
             # Set permissions
             sudo chown -R www-data:www-data /var/www/betnwin_pro
@@ -75,7 +80,7 @@ jobs:
             sudo tee /etc/nginx/sites-available/betnwin_pro > /dev/null <<EOL
             server {
               listen 80;
-              server_name 170.64.136.229;
+              server_name 209.38.17.36;
 
               root /var/www/betnwin_pro/public;
               index index.php index.html index.htm;
