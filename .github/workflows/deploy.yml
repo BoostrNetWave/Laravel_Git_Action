@@ -77,28 +77,29 @@ jobs:
             sudo apt install nginx -y
 
             # Create Nginx configuration file
-            sudo tee /etc/nginx/sites-available/betnwin_pro > /dev/null <<EOL
+            sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/betnwin_pro
             server {
-              listen 80;
-              server_name 209.38.17.36;
-
-              root /var/www/betnwin_pro/public;
-              index index.php index.html index.htm;
-
-              location / {
-                  try_files \$uri \$uri/ /index.php?\$query_string;
-              }
-
-              location ~ \.php$ {
-                  include snippets/fastcgi-php.conf;
-                  fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-              }
-
-              location ~ /\.ht {
-                  deny all;
-              }
+                listen 80;
+                server_name 209.38.20.233;
+            
+                root /var/www/betnwin_pro/public;
+                index index.php index.html index.htm;
+            
+                location / {
+                    try_files \$uri \$uri/ /index.php?\$query_string;
+                }
+            
+                location ~ \.php$ {
+                    include snippets/fastcgi-php.conf;
+                    fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+                }
+            
+                location ~ /\.ht {
+                    deny all;
+                }
             }
-            EOL
+            EOF'
+
 
             # Enable the Nginx site configuration
             sudo ln -s /etc/nginx/sites-available/betnwin_pro /etc/nginx/sites-enabled/
