@@ -50,4 +50,77 @@ jobs:
             sudo apt-get update
             sudo apt-get install postgresql-16 -y
 
-            
+            # Setup PostgreSQL
+            # sudo -i -u postgres psql -c "CREATE USER your_username WITH PASSWORD 'your_password';"
+            # sudo -i -u postgres psql -c "ALTER USER your_username WITH SUPERUSER;"
+            # sudo -i -u postgres psql -c "CREATE DATABASE your_database_name;"
+            # sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE your_database_name TO your_username;"
+
+            sudo -i -u postgres psql -c "CREATE USER betnwin_user WITH PASSWORD 'sivA898S';"
+            sudo -i -u postgres psql -c "ALTER USER betnwin_user WITH SUPERUSER;"
+            sudo -i -u postgres psql -c "CREATE DATABASE betnwin_db;"
+            sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE betnwin_db TO betnwin_user;"
+
+            # Install Laravel 11
+            cd /var/www/
+            composer create-project --prefer-dist laravel/laravel betnwin_pro "11.*"
+            sudo chown -R $USER:$USER /var/www/betnwin_pro
+
+            # Install Laravel 11
+            # sudo mkdir -p /var/www/betnwin_pro
+            # sudo chown -R $USER:$USER /var/www/betnwin_pro
+            # cd /var/www/betnwin_pro
+            # composer create-project --prefer-dist laravel/laravel betnwin_pro "11.*"
+
+            # Create Nginx configuration file
+            sudo nano /etc/nginx/sites-available/betnwin_pro <<EOL
+            cat << EOF > /etc/nginx/sites-available/betnwin_pro <<EOL
+            server {
+              listen 80;
+              server_name 209.38.17.36;
+
+              root /var/www/betnwin_pro/public;
+              index index.php index.html index.htm;
+
+              location / {
+                  try_files \$uri \$uri/ /index.php?\$query_string;
+              }
+
+              location ~ \.php$ {
+                  include snippets/fastcgi-php.conf;
+                  fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+              }
+
+              location ~ /\.ht {
+                  deny all;
+              }
+            }
+            EOL
+
+            # Enable the Nginx site configuration
+            sudo ln -s /etc/nginx/sites-available/betnwin_pro /etc/nginx/sites-enabled/
+
+            # Test and restart Nginx
+            sudo nginx -t
+            sudo systemctl restart nginx
+
+            # Set permissions
+            sudo chown -R www-data:www-data /var/www/betnwin_pro
+            sudo chmod -R 755 /var/www/betnwin_pro
+
+            # Configure Laravel to use PostgreSQL
+            sudo bash -c 'cat > /var/www/betnwin_pro/.env <<EOL
+            DB_CONNECTION=pgsql
+            DB_HOST=127.0.0.1
+            DB_PORT=5432
+            DB_DATABASE=betnwin_db
+            DB_USERNAME=betnwin_user
+            DB_PASSWORD=sivA898S
+            EOL'
+
+            # Generate application key and run migrations
+            cd /var/www/betnwin_pro
+            php artisan key:generate
+            php artisan migrate
+          EOF
+
