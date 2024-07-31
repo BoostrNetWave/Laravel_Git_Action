@@ -77,7 +77,7 @@ jobs:
             cat << EOF > /etc/nginx/sites-available/betnwin_pro <<EOL
             server {
               listen 80;
-              server_name 209.38.20.233;
+              server_name 170.64.169.27;
 
               root /var/www/betnwin_pro/public;
               index index.php index.html index.htm;
