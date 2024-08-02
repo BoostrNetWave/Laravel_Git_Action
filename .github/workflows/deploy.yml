@@ -29,26 +29,26 @@ jobs:
         run: |
           ssh $SSH_USER@$DROPLET_IP << 'EOF'
             # Update and upgrade the system
-            sudo apt-get update
-            sudo apt-get upgrade -y
+            # sudo apt-get update
+            # sudo apt-get upgrade -y
 
             # Install PHP 8.2
-            sudo add-apt-repository ppa:ondrej/php -y
-            sudo apt-get update
-            sudo apt-get install php8.2 php8.2-cli php8.2-fpm php8.2-pgsql php8.2-mbstring php8.2-xml php8.2-curl php8.2-zip php8.2-intl -y
+            # sudo add-apt-repository ppa:ondrej/php -y
+            # sudo apt-get update
+            # sudo apt-get install php8.2 php8.2-cli php8.2-fpm php8.2-pgsql php8.2-mbstring php8.2-xml php8.2-curl php8.2-zip php8.2-intl -y
 
             # Install Nginx
-            sudo apt install nginx -y
+            # sudo apt install nginx -y
 
             # Install Composer
-            curl -sS https://getcomposer.org/installer | php
-            sudo mv composer.phar /usr/local/bin/composer
+            # curl -sS https://getcomposer.org/installer | php
+            # sudo mv composer.phar /usr/local/bin/composer
 
             # Install PostgreSQL 16.3
-            sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-            wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-            sudo apt-get update
-            sudo apt-get install postgresql-16 -y
+            # sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+            # wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+            # sudo apt-get update
+            # sudo apt-get install postgresql-16 -y
 
             # Setup PostgreSQL
             # sudo -i -u postgres psql -c "CREATE USER your_username WITH PASSWORD 'your_password';"
@@ -56,15 +56,15 @@ jobs:
             # sudo -i -u postgres psql -c "CREATE DATABASE your_database_name;"
             # sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE your_database_name TO your_username;"
 
-            sudo -i -u postgres psql -c "CREATE USER betnwin_user WITH PASSWORD 'sivA898S';"
-            sudo -i -u postgres psql -c "ALTER USER betnwin_user WITH SUPERUSER;"
-            sudo -i -u postgres psql -c "CREATE DATABASE betnwin_db;"
-            sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE betnwin_db TO betnwin_user;"
+            # sudo -i -u postgres psql -c "CREATE USER betnwin_user WITH PASSWORD 'sivA898S';"
+            # sudo -i -u postgres psql -c "ALTER USER betnwin_user WITH SUPERUSER;"
+            # sudo -i -u postgres psql -c "CREATE DATABASE betnwin_db;"
+            # sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE betnwin_db TO betnwin_user;"
 
             # Install Laravel 11
-            cd /var/www/
-            composer create-project --prefer-dist laravel/laravel betnwin_pro "11.*"
-            sudo chown -R $USER:$USER /var/www/betnwin_pro
+            # cd /var/www/
+            # composer create-project --prefer-dist laravel/laravel betnwin_pro "11.*"
+            # sudo chown -R $USER:$USER /var/www/betnwin_pro
 
             # Install Laravel 11
             # sudo mkdir -p /var/www/betnwin_pro
@@ -72,30 +72,31 @@ jobs:
             # cd /var/www/betnwin_pro
             # composer create-project --prefer-dist laravel/laravel betnwin_pro "11.*"
 
+
             # Create Nginx configuration file
-            sudo nano /etc/nginx/sites-available/betnwin_pro <<EOL
-            cat << EOF > /etc/nginx/sites-available/betnwin_pro <<EOL
+            sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/betnwin_pro
             server {
-              listen 80;
-              server_name 170.64.230.173;
-
-              root /var/www/betnwin_pro/public;
-              index index.php index.html index.htm;
-
-              location / {
-                  try_files \$uri \$uri/ /index.php?\$query_string;
-              }
-
-              location ~ \.php$ {
-                  include snippets/fastcgi-php.conf;
-                  fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-              }
-
-              location ~ /\.ht {
-                  deny all;
-              }
+                listen 80;
+                server_name 209.38.17.36;
+            
+                root /var/www/betnwin_pro/public;
+                index index.php index.html index.htm;
+            
+                location / {
+                    try_files \$uri \$uri/ /index.php?\$query_string;
+                }
+            
+                location ~ \.php$ {
+                    include snippets/fastcgi-php.conf;
+                    fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+                }
+            
+                location ~ /\.ht {
+                    deny all;
+                }
             }
-            EOL
+            EOF'
+
 
             # Enable the Nginx site configuration
             sudo ln -s /etc/nginx/sites-available/betnwin_pro /etc/nginx/sites-enabled/
