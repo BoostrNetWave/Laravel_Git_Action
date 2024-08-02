@@ -16,7 +16,7 @@ jobs:
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: SSH Key Bypass
         run: |
@@ -77,7 +77,7 @@ jobs:
             cat << EOF > /etc/nginx/sites-available/betnwin_pro <<EOL
             server {
               listen 80;
-              server_name 209.38.17.36;
+              server_name 170.64.230.173;
 
               root /var/www/betnwin_pro/public;
               index index.php index.html index.htm;
